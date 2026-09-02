@@ -1,0 +1,30 @@
+# secrets
+.env
+*.env
+terraform.tfvars
+*.auto.tfvars
+id_ed25519
+id_ed25519.pub
+*.pem
+
+# terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/crash.log
+
+# ansible
+*.retry
+ansible-cp-cloud-server/inventory.ini
+
+# monitoring - runtime data, nie config
+monitoring/grafana/data/
+monitoring/prometheus/data/
+
+# technitium - runtime data i pobierane paczki, nie config
+technitium/config/stats/
+technitium/config/cache.bin
+technitium/config/log.config
+technitium/config/blocklists/
+technitium/config/apps/
+technitium/config/scopes/

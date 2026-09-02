@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "smokeping-prober"
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - smokeping-prober:9374
+
+  - job_name: "proxmox"
+    static_configs:
+      - targets:
+          - 192.168.20.2
+    metrics_path: /pve
+    params:
+      target: ["192.168.20.2"]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: pve-exporter:9221

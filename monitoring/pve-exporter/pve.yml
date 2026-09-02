@@ -1,0 +1,5 @@
+default:
+  user: proxmox_monitor@pve
+  token_name: monitor
+  token_value: b6ae8044-580f-4091-bda6-7e7b567fc567
+  verify_ssl: false

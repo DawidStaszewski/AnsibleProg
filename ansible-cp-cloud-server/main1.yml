@@ -1,0 +1,93 @@
+---
+- name: HomelabCopy
+  hosts: homelab
+  become: true
+  vars:
+    opt_dir: /opt
+
+  tasks:
+    - name: Update
+      apt:
+        update_cache: true
+
+    - name: Prerequisites
+      apt:
+        name: [ca-certificates, curl, gnupg]
+        state: present
+
+
+   - name: Install QEMU Guest Agent
+     apt:
+       name: qemu-guest-agent
+       state: present
+
+   - name: Enable QEMU Guest Agent
+     systemd:
+       name: qemu-guest-agent
+       enabled: true
+       state: started
+
+
+    - name: Add Docker repo
+      ansible.builtin.deb822_repository:
+        name: docker
+        types: deb
+        uris: https://download.docker.com/linux/debian
+        suites: "{{ ansible_distribution_release }}"
+        components:
+          - stable
+        signed_by: https://download.docker.com/linux/debian/gpg
+
+    - name: Install Docker
+      apt:
+        name: [docker-ce, docker-ce-cli, containerd.io, docker-compose-plugin]
+        state: present
+        update_cache: true
+
+    - name: Add admin to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
+    - name: Create Dir
+      file:
+        path: "{{ opt_dir }}/{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - monitoring/prometheus/config
+        - monitoring/pve-exporter
+
+
+    - name: Chown
+      file:
+        path: "{{ opt_dir }}/{{ item.path }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ item.uid }}"
+        group: "{{ item.uid }}"
+      loop:
+        - { path: "monitoring/prometheus/data", uid: "65534" }
+        - { path: "monitoring/grafana/data", uid: "472" }
+
+
+    - name: Copy monitoring compose.yaml
+      copy:
+        src: ../monitoring/compose.yaml
+        dest: "{{ opt_dir }}/monitoring/compose.yaml"
+
+    - name: Copy prometheus config
+      copy:
+        src: ../monitoring/prometheus/config/
+        dest: "{{ opt_dir }}/monitoring/prometheus/config/"
+
+    - name: Copy pve-exporter config
+      copy:
+        src: ../monitoring/pve-exporter/pve.yml
+        dest: "{{ opt_dir }}/monitoring/pve-exporter/pve.yml"
+
+    - name: Start monitoring
+      community.docker.docker_compose_v2:
+        project_src: "{{ opt_dir }}/monitoring"
+        state: present
