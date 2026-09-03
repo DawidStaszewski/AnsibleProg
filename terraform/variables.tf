@@ -1,3 +1,11 @@
+variable "vms" {
+  type = map(object({
+    vm_id = number
+    vm_hostname = string
+    vm_ip = string
+  }))
+}
+
 variable "pve_endpoint" {
   type = string
 }
@@ -12,10 +20,7 @@ variable "target_node" {
   default = "pve"
 }
 
-variable "vm_hostname" {
+variable "vm_gateway" {
   type = string
-}
-
-variable "vm_id" {
-  type = number
+  default = "192.168.20.1"
 }

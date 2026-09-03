@@ -1,0 +1,43 @@
+---
+- name: Disable cloud-init network config management
+  ansible.builtin.copy:
+    content: |
+      network: {config: disabled}
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    mode: "0644"
+
+- name: Remove old static netplan config
+  ansible.builtin.file:
+    path: /etc/netplan/50-cloud-init.yaml
+    state: absent
+
+- name: Enable DHCP
+  ansible.builtin.copy:
+    content: |
+      network:
+        version: 2
+        ethernets:
+          {{ ansible_default_ipv4.interface }}:
+            dhcp4: true
+    dest: /etc/netplan/01-dhcp.yaml
+    mode: "0600"
+
+- name: Apply netplan
+  ansible.builtin.command:
+    cmd: netplan apply
+  async: 45
+  poll: 0
+
+- name: Wait for DHCP renegotiation
+  ansible.builtin.pause:
+    seconds: 15
+
+- name: Reset Ansible connection
+  ansible.builtin.meta: reset_connection
+
+- name: Gather new facts
+  ansible.builtin.setup:
+
+- name: Print VM IP
+  ansible.builtin.debug:
+    msg: "VM IP: {{ ansible_default_ipv4.address }}"

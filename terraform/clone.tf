@@ -1,7 +1,9 @@
 resource "proxmox_virtual_environment_vm" "homelab_clone" {
-  name      = var.vm_hostname
+  for_each = var.vms
+
+  name      = each.value.vm_hostname
   node_name = var.target_node
-  vm_id	    = var.vm_id
+  vm_id	    = each.value.vm_id
 
   clone {
     vm_id = 9000
@@ -16,18 +18,20 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
     cores = 2
   }
 
-  memory {
-    dedicated = 2048
+  agent {
+    enabled = false	
   }
 
-  agent {
-    enabled = true
+
+  memory {
+    dedicated = 2048
   }
 
   initialization {
     ip_config {
       ipv4 {
-        address = "dhcp"
+        address = each.value.vm_ip
+	gateway = var.vm_gateway
       }
     }
     user_account {
@@ -38,6 +42,6 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
 }
 
 output "clone_ip" {
-  value = proxmox_virtual_environment_vm.homelab_clone.ipv4_addresses
+  value = {for i, v in proxmox_virtual_environment_vm.homelab_clone : i => v.ipv4_addresses }
 }
 
