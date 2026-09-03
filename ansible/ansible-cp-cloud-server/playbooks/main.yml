@@ -1,0 +1,9 @@
+---
+- name: HomelabCopy
+  hosts: homelab
+  become: true
+
+  roles:
+  - docker
+  - monitoring
+

@@ -1,0 +1,41 @@
+---
+- name: Create data directories with correct ownership
+  file:
+    path: "{{ opt_dir }}/{{ item.path }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ item.uid }}"
+    group: "{{ item.uid }}"
+  loop:
+    - { path: "monitoring/prometheus/data", uid: "65534" }
+    - { path: "monitoring/grafana/data", uid: "472" }
+
+- name: Create config directories
+  file:
+    path: "{{ opt_dir }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - monitoring/prometheus/config
+    - monitoring/pve-exporter
+
+- name: Copy monitoring compose.yaml
+  copy:
+    src: "{{ homelab_source_dir}}/compose.yaml"
+    dest: "{{ opt_dir }}/monitoring/compose.yaml"
+
+- name: Copy prometheus config
+  copy:
+    src: "{{ homelab_source_dir  }}/prometheus/config/"
+    dest: "{{ opt_dir }}/monitoring/prometheus/config/"
+
+- name: Copy pve-exporter config
+  copy:
+    src: "{{ homelab_source_dir }}/pve-exporter/pve.yml"
+    dest: "{{ opt_dir }}/monitoring/pve-exporter/pve.yml"
+
+- name: Start monitoring stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ opt_dir }}/monitoring"
+    state: present
+  notify: restart monitoring

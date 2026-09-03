@@ -40,3 +40,4 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
 output "clone_ip" {
   value = proxmox_virtual_environment_vm.homelab_clone.ipv4_addresses
 }
+
