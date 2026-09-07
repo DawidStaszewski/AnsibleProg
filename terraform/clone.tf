@@ -31,6 +31,7 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
     ip_config {
       ipv4 {
         address = "${local.ip_pool[index(keys(var.vms), each.key)]}/24"
+	gateway = "192.168.20.1"
       }
     }
     user_account {

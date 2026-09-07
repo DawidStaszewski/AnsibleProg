@@ -5,12 +5,12 @@ variable "network_base" {
 
 variable "range_start" {
   type = number
-  default = 20
+  default = 21
 }
 
 variable "range_end" {
   type = number
-  default = 65
+  default = 63
 }
 
 variable "vms" {
