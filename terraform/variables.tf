@@ -1,8 +1,22 @@
+variable "network_base" {
+  type = string
+  default = "192.168.20.0/24"
+}
+
+variable "range_start" {
+  type = number
+  default = 20
+}
+
+variable "range_end" {
+  type = number
+  default = 65
+}
+
 variable "vms" {
   type = map(object({
     vm_id = number
     vm_hostname = string
-    vm_ip = string
   }))
 }
 

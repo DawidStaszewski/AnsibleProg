@@ -6,7 +6,7 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
   vm_id	    = each.value.vm_id
 
   clone {
-    vm_id = 9000
+    vm_id = 9999
     full  = true
   }
 
@@ -19,9 +19,9 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
   }
 
   agent {
-    enabled = false	
+    enabled = true	
+    timeout = "3m" 
   }
-
 
   memory {
     dedicated = 2048
@@ -30,8 +30,7 @@ resource "proxmox_virtual_environment_vm" "homelab_clone" {
   initialization {
     ip_config {
       ipv4 {
-        address = each.value.vm_ip
-	gateway = var.vm_gateway
+        address = "${local.ip_pool[index(keys(var.vms), each.key)]}/24"
       }
     }
     user_account {
