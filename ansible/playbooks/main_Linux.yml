@@ -1,6 +1,6 @@
 ---
 - name: HomelabCopy
-  hosts: homelab
+  hosts: linux
   become: true
 
   roles:

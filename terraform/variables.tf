@@ -10,14 +10,22 @@ variable "range_start" {
 
 variable "range_end" {
   type = number
-  default = 63
+  default = 99
 }
 
-variable "vms" {
+variable "linux_vms" {
   type = map(object({
     vm_id = number
     vm_hostname = string
   }))
+}
+
+variable "windows_vms" {
+  type = map(object({
+    vm_id       = number
+    vm_hostname = string
+  }))
+  default = {}
 }
 
 variable "pve_endpoint" {

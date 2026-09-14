@@ -1,47 +1,29 @@
-resource "proxmox_virtual_environment_vm" "homelab_clone" {
-  for_each = var.vms
+module "linux_vm" {
+  source   = "./modules/linux_debian_qcow2"
+  for_each = var.linux_vms
 
-  name      = each.value.vm_hostname
-  node_name = var.target_node
-  vm_id	    = each.value.vm_id
-
-  clone {
-    vm_id = 9999
-    full  = true
-  }
-
-  vga{
-    type = "std"
-  }
-
-  cpu {
-    cores = 2
-  }
-
-  agent {
-    enabled = true	
-    timeout = "3m" 
-  }
-
-  memory {
-    dedicated = 2048
-  }
-
-  initialization {
-    ip_config {
-      ipv4 {
-        address = "${local.ip_pool[index(keys(var.vms), each.key)]}/24"
-	gateway = "192.168.20.1"
-      }
-    }
-    user_account {
-      username = "admin"
-      keys = [file("/root/.ssh/id_ed25519.pub")]
-    }
-  }
+  vm_id       = each.value.vm_id
+  vm_hostname = each.value.vm_hostname
+  vm_ip       = "${local.linux_ip_pool[each.key]}/24"
+  target_node = var.target_node
+  vm_gateway  = var.vm_gateway
 }
 
-output "clone_ip" {
-  value = {for i, v in proxmox_virtual_environment_vm.homelab_clone : i => v.ipv4_addresses }
+module "windows_vm" {
+  source   = "./modules/windows_server2022_raw"
+  for_each = var.windows_vms
+
+  vm_id       = each.value.vm_id
+  vm_hostname = each.value.vm_hostname
+  vm_ip       = "${local.windows_ip_pool[each.key]}/24"
+  target_node = var.target_node
+  vm_gateway  = var.vm_gateway
 }
 
+output "linux_clone_ip" {
+  value = { for k, m in module.linux_vm : k => m.ip_address }
+}
+
+output "windows_clone_ip" {
+  value = { for k, m in module.windows_vm : k => m.ip_address }
+}

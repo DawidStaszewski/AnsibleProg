@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    proxmox = {
+      source = "bpg/proxmox"
+    }
+  }
+}
+
 resource "proxmox_virtual_environment_vm" "this" {
   name      = var.vm_hostname
   node_name = var.target_node
@@ -39,6 +47,6 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }

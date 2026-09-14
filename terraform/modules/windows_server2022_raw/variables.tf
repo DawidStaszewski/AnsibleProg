@@ -5,7 +5,7 @@ variable "target_node" {}
 variable "vm_gateway" {}
 variable "clone_from" {
   type    = number
-  default = 9998 # ID szablonu Windows
+  default = 9000
 }
 variable "cores" {
   type    = number
@@ -16,5 +16,7 @@ variable "memory" {
   default = 4096
 }
 variable "admin_password" {
+  type = string
   sensitive = true
+  default = "Admin321"
 }
