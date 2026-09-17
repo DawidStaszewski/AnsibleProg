@@ -15,8 +15,14 @@ variable "memory" {
   type    = number
   default = 4096
 }
+
+variable "username"{
+  type=string
+  default = "Administrator"
+}
+
 variable "admin_password" {
   type = string
   sensitive = true
-  default = "Admin321"
+  default = "Admin123!Strong"
 }

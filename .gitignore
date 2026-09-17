@@ -18,11 +18,11 @@ terraform/crash.log
 *.retry
 ansible-cp-cloud-server/inventory.ini
 
-# monitoring - runtime data, nie config
+# monitoring
 monitoring/grafana/data/
 monitoring/prometheus/data/
 
-# technitium - runtime data i pobierane paczki, nie config
+# technitium
 technitium/config/stats/
 technitium/config/cache.bin
 technitium/config/log.config

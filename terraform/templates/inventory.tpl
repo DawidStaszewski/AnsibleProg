@@ -13,5 +13,5 @@ ansible_connection=winrm
 ansible_port=5986
 ansible_winrm_transport=ntlm
 ansible_winrm_server_cert_validation=ignore
-ansible_user=admin
-ansible_password=Admin123
+ansible_user=Admin
+ansible_password=Admin123!Strong

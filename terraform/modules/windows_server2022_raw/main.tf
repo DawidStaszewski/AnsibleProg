@@ -45,7 +45,7 @@ resource "proxmox_virtual_environment_vm" "this" {
       }
     }
     user_account {
-      username = "admin"
+      username = var.username
       password = var.admin_password
     }
   }
